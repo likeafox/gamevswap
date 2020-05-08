@@ -41,8 +41,9 @@ fi
 # validate args
 USAGE="Usage:
     $(basename "${BASH_SOURCE[0]}") mount <GAME> [VERSION]
+    $(basename "${BASH_SOURCE[0]}") unmount <GAME>
     $(basename "${BASH_SOURCE[0]}") branch <GAME> <VERSION>"
-if [[ ! $1 = mount && ! $1 = branch || -z $2 ]] ; then
+if [[ ! $1 = mount && ! $1 = branch && ! $1 = unmount || -z $2 ]] ; then
     echo "$USAGE"
     exit 1;
 fi
