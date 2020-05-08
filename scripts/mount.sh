@@ -36,7 +36,7 @@ echo "Selecting $GAME version $SELECT_VER"
 
 # unmount, if necessary
 if findmnt "$TARGET"; then
-    if [[ "$PREV_SEL" = "$SELECT_VER" ]]
+    if [[ "$PREV_VER" = "$SELECT_VER" ]]
     then
         echo "Selected version already mounted."
         exit 0;
