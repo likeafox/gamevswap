@@ -43,11 +43,11 @@ if findmnt "$TARGET"; then
     fi
     fusermount -u "$TARGET"
     # intermediary mount point as well
-    fusermount -u inter
+    fusermount -u inter 2> /dev/null
 fi
 
 # delete old changes dir, if any
-[[ ! -d changes ]] && rm -rf "$(readlink -f changes)"
+[[ -d changes ]] && rm -rf "$(readlink -f changes)"
 rm changes
 
 # will the user folder be mounted?
@@ -58,16 +58,17 @@ MOUNT_USER=$(
     [[ ${#CONTENTS[@]} -gt 0 ]] &&
         echo 'true' ||
         echo 'false'
+)
 
 # create changes dir for accumulating changes to game files
 ln -s "$(mktemp -d -t gamevswap-XXXXXXXXXX)" changes
 
 # mount
 if ! $MOUNT_USER; then
-    unionfs -o cow -o nonempty changes=RW:"$SELECT_VER"=RO "$TARGET"
+    unionfs -o cow -o nonempty changes=RW:versions/"$SELECT_VER"=RO "$TARGET"
     STATUS=$?
 else
-    unionfs -o cow changes=RW:"$SELECT_VER"=RO inter &&
+    unionfs -o cow changes=RW:versions/"$SELECT_VER"=RO inter &&
     unionfs -o cow -o nonempty inter=RW:user=RO "$TARGET"
     STATUS=$?
     [[ $STATUS = 0 ]] || fusermount -u inter

@@ -72,4 +72,3 @@ fi
 
 # exec command
 source scripts/${1}.sh
-ata

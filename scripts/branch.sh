@@ -41,7 +41,8 @@ INTER="$(pwd)"/inter
 BRANCH_SOURCE="$(findmnt "$INTER" > /dev/null && echo "$INTER" || echo "$TARGET")"
 
 # create branch!
-cp -PpR "$BRANCH_SOURCE" versions/"$SELECT_VER"
+cp -PpR "$BRANCH_SOURCE" versions/"$SELECT_VER" &&
+echo "Branch $SELECT_VER successfully created."
 echo "$SELECT_VER" > cur
 
 # ensure game is unmounted
