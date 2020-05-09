@@ -53,7 +53,9 @@ $ ln -s ~/.local/share/Steam/steamapps/common my-steam-library
 ```
 ### Separate any custom content
 
-In preparation of creating the first game snapshot, if you have any custom user content in the game directory that you want to remain the same across all versions, you should remove it from the game directory to a temporary locgamevswap's dependency, , alled (non-Steam-workshop) mods are placed in `RimWorld/Mods/`. You should move them out, for now.
+In preparation of creating the first game snapshot, if you have any custom user content in the game directory that you want to remain the same across all versions, you should remove it from the game directory to a temporary location.
+
+For RimWorld, manually-installed (non-Steam-workshop) mods are placed in `RimWorld/Mods/`. You should move them out, for now.
 
 We'll later configure this custom content to be added to every version snapshot automatically.
 
