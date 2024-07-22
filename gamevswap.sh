@@ -3,7 +3,7 @@
 # This file is part of gamevswap, a utility to easily switch between
 # versions of Steam games.
 #
-# Copyright (c) 2020  Jason Forbes, <contact@jasonforbes.ca>
+# Copyright (c) 2020-2024  Jason Forbes, <contact@jasonforbes.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,14 +23,15 @@
 BASENAME=$(basename "${BASH_SOURCE[0]}")
 USAGE="gamevswap: is a utility for easily switching between software versions of
 games.
-(c) 2020 Jason Forbes
+(c) 2020-2024 Jason Forbes
+This program comes with ABSOLUTELY NO WARRANTY.
 Licensed for public use under GPLv3.
 
 Usage:
     $BASENAME mount GAME [VERSION]
     $BASENAME unmount GAME
     $BASENAME branch GAME VERSION
-    
+
 Operating modes:
     mount - Mount a previously saved filesystem state of the specified game.
 
@@ -40,7 +41,7 @@ Operating modes:
 
     unmount - The opposite of mount; any unsaved changes to the mounted game
             directory will be lost.
-            
+
     branch - Branches off of the current state of the game directory, creating
             a new save state, using VERSION as the new version tag. The new
             branch is then immediately mounted.
@@ -57,7 +58,7 @@ Options:
 
 
 
-# cd to script directory
+# cd to main program directory
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 # test for existence of this script

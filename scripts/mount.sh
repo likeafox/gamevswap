@@ -1,7 +1,7 @@
 # This file is part of gamevswap, a utility to easily switch between
 # versions of Steam games.
 #
-# Copyright (c) 2020  Jason Forbes, <contact@jasonforbes.ca>
+# Copyright (c) 2020-2024  Jason Forbes, <contact@jasonforbes.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
