@@ -20,8 +20,7 @@
 
 # cd to game data dir
 if ! pushd "apps/$GAME"; then
-    echo "No saved versions exist for $GAME"
-    exit 1;
+    fail_msg "No saved versions exist for $GAME"
 fi
 
 # previous version selection
@@ -29,22 +28,16 @@ PREV_VER="$(<cur)"
 # select previous version, if specified version is blank
 SELECT_VER="${SELECT_VER:-$PREV_VER}"
 if [[ ! -d versions/$SELECT_VER ]]; then
-    echo "$GAME version $SELECT_VER branch does not exist."
-    exit 1;
+    fail_msg "$GAME version $SELECT_VER branch does not exist."
 fi
 echo "Selecting $GAME version $SELECT_VER"
 
-# unmount, if necessary
-if findmnt "$TARGET"; then
-    if [[ "$PREV_VER" = "$SELECT_VER" ]]
-    then
-        echo "Selected version already mounted."
-        exit 0;
-    fi
-    fusermount -u "$TARGET"
-    # intermediary mount point as well
-    fusermount -u inter 2> /dev/null
+#
+if findmnt "$TARGET" && [[ "$PREV_VER" = "$SELECT_VER" ]]; then
+    echo "Selected version already mounted."
+    exit 0;
 fi
+unmount || exit 1
 
 # delete old changes dir, if any
 [[ -d changes ]] && rm -rf "$(readlink -f changes)"
@@ -71,7 +64,7 @@ else
     unionfs -o cow changes=RW:versions/"$SELECT_VER"=RO inter &&
     unionfs -o cow -o nonempty inter=RW:user=RO "$TARGET"
     STATUS=$?
-    [[ $STATUS = 0 ]] || fusermount -u inter
+    [[ $STATUS = 0 ]] || unmount
 fi
 
 #
@@ -80,8 +73,7 @@ if [[ $STATUS = 0 ]]; then
     # save version selection
     echo "$SELECT_VER" > cur
 else
-    echo "Mount failed"
-    exit 1;
+    fail_msg "Mount failed"
 fi
 
 popd > /dev/null

@@ -58,13 +58,18 @@ Options:
 
 
 
+fail_msg () {
+    echo "$1" >&2
+    exit 1;
+}
+
 # cd to main program directory
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+MAIN_DIR="$(realpath "` dirname "${BASH_SOURCE[0]}" `")"
+cd "$MAIN_DIR"
 
 # test for existence of this script
 if [[ ! $(head gamevswap.sh) == *gamevswap* ]] ; then
-    echo "Failed to find gamevswap directory"
-    exit 1;
+    fail_msg "Failed to find gamevswap directory"
 fi
 
 # ensure potentially empty directories exist
@@ -72,8 +77,7 @@ mkdir -p apps searchdirs
 
 #
 if ! command -v unionfs-fuse > /dev/null ; then
-    echo "This program requires unionfs-fuse to be installed."
-    exit 1;
+    fail_msg "This program requires unionfs-fuse to be installed."
 fi
 
 # validate args
@@ -90,8 +94,7 @@ shopt -s nullglob
 SEARCHES=( ./searchdirs/* )
 if [[ ${#SEARCHES[@]} = 0 ]]; then
     if [[ ! -d $DEFAULT_SEARCH ]]; then
-        echo "Cannot locate any game directories: searchdirs/ contains no links to game libraries, and the default library $DEFAULT_SEARCH does not exist."
-        exit 1;
+        fail_msg "Cannot locate any game directories: searchdirs/ contains no links to game libraries, and the default library $DEFAULT_SEARCH does not exist."
     fi
     SEARCHES=("$DEFAULT_SEARCH")
 fi
@@ -102,10 +105,32 @@ for SEARCH in "${SEARCHES[@]}"; do
     [[ -d "$SEARCH/$GAME" ]] && TARGET=$(readlink -f "$SEARCH/$GAME") && break;
 done
 if [[ -z $TARGET ]]; then
-    echo "Game \"$GAME\" not found"
-    exit 1;
+    fail_msg "Game \"$GAME\" not found"
 fi
 echo "Found game at $TARGET"
+
+#
+unmount () {
+    u () {
+        {
+            ! findmnt "$1"
+        } || {
+            fusermount -u "$1"
+        } || {
+            sleep 1
+            sync -f "$1"
+            fusermount -u "$1"
+        } || {
+            fusermount -uz "$1"
+            sleep 1
+            ! findmnt "$1"
+        }
+    }
+    u "$TARGET" && u "${MAIN_DIR}/apps/$GAME/inter" || {
+        echo "unmount() failed." >&2
+        return false
+    }
+}
 
 # exec command
 source scripts/${1}.sh

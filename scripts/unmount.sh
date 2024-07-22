@@ -18,5 +18,4 @@
 
 
 
-fusermount -u "$TARGET"
-fusermount -u apps/"$GAME"/inter 2> /dev/null
+unmount

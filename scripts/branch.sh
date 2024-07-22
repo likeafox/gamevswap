@@ -21,8 +21,7 @@
 # ensure version selection
 if [[ -z $SELECT_VER ]]; then
     echo "You must specify version tag when branching."
-    echo "Failed to create branch."
-    exit 1;
+    fail_msg "Failed to create branch."
 fi
 
 # cd to game data dir, and ensure required directories exist
@@ -32,8 +31,7 @@ mkdir -p inter user versions
 
 #
 if [[ -d versions/$SELECT_VER ]]; then
-    echo "Cannot create branch; it already exists."
-    exit 1;
+    fail_msg "Cannot create branch; it already exists."
 fi
 
 # determine branch source to copy from
@@ -45,12 +43,11 @@ cp -PpR "$BRANCH_SOURCE" versions/"$SELECT_VER" &&
 echo "Branch $SELECT_VER successfully created."
 echo "$SELECT_VER" > cur
 
-# ensure game is unmounted
-fusermount -u "$TARGET"
-fusermount -u inter
-
 #
 popd > /dev/null
+
+# ensure game is unmounted
+unmount || exit 1
 
 # mount new branch
 source scripts/mount.sh
